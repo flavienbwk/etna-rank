@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   labels:
     name: ingress-nginx
-  namespace: my-app
+  namespace: etna-rank
   name: ingress-nginx
 spec:
   rules:
@@ -17,28 +17,3 @@ spec:
             name: nginx
             port:
               number: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  labels:
-    name: ingress-ldap
-  namespace: my-app
-  name: ingress-ldap
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/secure-backends: "true"
-spec:
-  rules:
-  - host: ldap.21a6c45e-0efa-4ac9-8bbb-8b7fc76d40f5.nodes.k8s.fr-par.scw.cloud
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: phpldapadmin
-            port:
-              number: 8080

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  namespace: my-app
+  namespace: etna-rank
   name: nginx-logs-pvc
 spec:
   accessModes:

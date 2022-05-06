@@ -2,7 +2,6 @@ version: "3"
 
 services:
 
-  # Service-related
   app:
     build:
       context: ./app
@@ -12,7 +11,6 @@ services:
       NODE_ENV: "production"
       CHOKIDAR_USEPOLLING: "false"
 
-  # We set-up NGINX to have a unique endpoint for app & api
   nginx:
     build:
       context: ./nginx

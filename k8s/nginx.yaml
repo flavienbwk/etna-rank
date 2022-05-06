@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: my-app
+  namespace: etna-rank
   labels:
     app: nginx
   name: nginx
@@ -18,7 +18,7 @@ spec:
         app: nginx
     spec:
       containers:
-        - image: flavienb/reactjs-flask-ldap-boilerplate-nginx:latest
+        - image: flavienb/etna-rank:latest
           name: nginx
           ports:
             - containerPort: 80
@@ -37,7 +37,7 @@ status: {}
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: my-app
+  namespace: etna-rank
   labels:
     app: nginx
   name: nginx
