@@ -10,6 +10,8 @@ services:
     environment:
       NODE_ENV: "production"
       CHOKIDAR_USEPOLLING: "false"
+    depends_on:
+      - nginx
 
   nginx:
     build:
@@ -19,9 +21,8 @@ services:
     ports:
       - "8080:80"
     volumes:
+      - ./certs:/etc/nginx/certificates
       - nginx_logs:/var/log/nginx
-    depends_on:
-      - app
 
 volumes:
   nginx_logs:

@@ -12,3 +12,5 @@ RUN npm install -g serve
 
 EXPOSE 3000
 ENTRYPOINT ["serve", "-l", "tcp://0.0.0.0:3000", "-s", "/app/build"]
+
+# TODO: to-stage build
