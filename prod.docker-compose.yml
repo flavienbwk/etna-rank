@@ -1,67 +1,12 @@
-version: "3.3"
+version: "3"
 
 services:
-  
-  # LDAP-related
-
-  ldap:
-    image: osixia/openldap:1.3.0
-    restart: always
-    env_file:
-      - .env
-    volumes:
-        - ldap_data:/var/lib/ldap
-        - ldap_slapd:/etc/ldap/slapd.d
-
-  phpldapadmin:
-    image: osixia/phpldapadmin:0.9.0
-    restart: always
-    ports:
-        - 8081:443
-    environment: 
-        PHPLDAPADMIN_LDAP_HOSTS: ldap
-    depends_on: 
-      - ldap
-
-
-  # Database-related
-
-  database:
-    image: postgres:12.2-alpine
-    restart: always
-    env_file:
-      - .env
-    volumes:
-      - database:/var/lib/postgresql/data
-
 
   # Service-related
-
-  api:
-    build:
-      context: ./api
-      dockerfile: prod.Dockerfile
-      args:
-        FLASK_API_VERSION: ${FLASK_API_VERSION}
-    image: flavienb/reactjs-flask-ldap-boilerplate-api:latest
-    restart: always
-    volumes:
-      - api_logs:/logs
-      - api_migrations:/migrations
-    env_file:
-      - .env
-    environment:
-      FLASK_LEVEL: "dev" # dev, test or prod
-      LOG_LEVEL: "DEBUG" # DEBUG, INFO, WARNING or ERROR
-    depends_on:
-      - ldap
-      - database
-
   app:
     build:
       context: ./app
       dockerfile: prod.Dockerfile
-    image: flavienb/reactjs-flask-ldap-boilerplate-app:latest
     restart: always
     environment:
       NODE_ENV: "production"
@@ -72,20 +17,13 @@ services:
     build:
       context: ./nginx
       dockerfile: prod.Dockerfile
-    image: flavienb/reactjs-flask-ldap-boilerplate-nginx:latest
     restart: always
     ports:
       - "8080:80"
     volumes:
       - nginx_logs:/var/log/nginx
     depends_on:
-      - api
       - app
 
 volumes:
-  api_logs:
   nginx_logs:
-  database:
-  ldap_data:
-  ldap_slapd:
-  api_migrations:

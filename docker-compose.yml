@@ -3,7 +3,6 @@ version: "3"
 services:
 
   # Service-related
-
   app:
     build: ./app
     restart: always
@@ -16,7 +15,6 @@ services:
   # We set-up an NGINX to have a unique endpoint for app & api
   nginx:
     build: ./nginx
-    image: flavienb/reactjs-flask-ldap-boilerplate-nginx:develop
     restart: always
     ports:
       - "8080:80"
@@ -24,5 +22,4 @@ services:
       - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
       - ./logs/nginx:/var/log/nginx
     depends_on:
-      - api
       - app
