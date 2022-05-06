@@ -33,7 +33,7 @@ jobs:
           submodules: 'true'
           ref: ${{ env.BRANCH_NAME }}
 
-      - name: Test
+      - name: Build
         run: |
           docker-compose build
     
