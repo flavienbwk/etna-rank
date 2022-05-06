@@ -1,4 +1,4 @@
-name: Etna-Rank dev build
+name: Dev build
 
 on:
   push:
