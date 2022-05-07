@@ -1,10 +1,14 @@
 # ETNA Rank
 
+![ETNA Rank logo](./app/app/public/logo192.png)
+
 Unofficial ranking page for ETNA students.
 
 ## Why ?
 
 ETNA-rank allows you to keep track of your Grade Point Average (GPA) for your current year of formation.
+
+:point_right: Want to contribute ? Feel free to open a pull request or an issue !
 
 ## Why we need to ask for your password ?
 
