@@ -69,7 +69,7 @@ export const Rank = () => {
           <Typography variant="h6">{promo?.details?.grade}</Typography>
         </Grid>
         <Grid item md={3} >
-          <Typography>You're logged in as <b>{login}</b></Typography>
+          <Typography>Connecté(e) en tant que <b>{login}</b></Typography>
         </Grid>
         <Grid item xs={12}>
           <Stack
