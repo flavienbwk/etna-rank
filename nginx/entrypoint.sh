@@ -6,6 +6,8 @@ else
     mkdir /etc/nginx/certificates
     chmod 700 /etc/nginx/certificates
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certificates/app.key -out /etc/nginx/certificates/app.crt -subj "/C=FR/ST=France/L=Paris/O=ETNA"
+fi
+if [ ! -f "/etc/nginx/certificates/dhparam.pem" ]; then
     openssl dhparam -out /etc/nginx/certificates/dhparam.pem 2048
 fi
 

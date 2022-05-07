@@ -27,7 +27,7 @@ services:
     build: ./nginx
     restart: always
     ports:
-      - "8080:443"
+      - "8090:443"
     volumes:
       - ./certs:/etc/nginx/certificates
       - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
