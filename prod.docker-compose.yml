@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3"
 
 services:
   # Using NGINX to get single endpoint for app and API
@@ -12,6 +12,11 @@ services:
     volumes:
       - ./certs:/etc/nginx/certificates
       - ./logs/nginx:/var/log/nginx
+    depends_on:
+      api:
+        condition: service_healthy
+      app:
+        condition: service_healthy
 
   api:
     build:
@@ -22,8 +27,6 @@ services:
       NODE_ENV: "production"
       CHOKIDAR_USEPOLLING: "false"
       REFETCH_DELAY: 3600
-    depends_on:
-      - nginx
 
   app:
     build:
@@ -33,5 +36,3 @@ services:
     environment:
       NODE_ENV: "production"
       CHOKIDAR_USEPOLLING: "false"
-    depends_on:
-      - nginx

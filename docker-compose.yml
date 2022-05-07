@@ -1,36 +1,37 @@
-version: "3.7"
+version: "3"
 
 services:
   # Using NGINX to get single endpoint for app and API
   nginx:
     build: ./nginx
-    restart: always
+    restart: unless-stopped
     ports:
       - "8080:443"
     volumes:
       - ./certs:/etc/nginx/certificates
       - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
       - ./logs/nginx:/var/log/nginx
+    depends_on:
+      api:
+        condition: service_healthy
+      app:
+        condition: service_healthy
 
   api:
     build: ./api
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./api/app:/app
     environment:
       NODE_ENV: "development"
       CHOKIDAR_USEPOLLING: "true"
       REFETCH_DELAY: 3600
-    depends_on:
-      - nginx
 
   app:
     build: ./app
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./app/app:/app
     environment:
       NODE_ENV: "development"
       CHOKIDAR_USEPOLLING: "true"
-    depends_on:
-      - nginx

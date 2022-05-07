@@ -15,9 +15,13 @@ FROM node:18.1.0-alpine
 
 WORKDIR /app
 
+RUN apk update && apk add curl
+
 COPY --from=builder /app/build .
 
 RUN npm install -g serve
 
-EXPOSE 8080
 ENTRYPOINT ["serve", "-l", "tcp://0.0.0.0:8080", "-s", "/app"]
+
+EXPOSE 8080
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=3 CMD curl --fail http://localhost:8080
