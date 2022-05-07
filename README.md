@@ -1,6 +1,18 @@
-# etna-rank
+# ETNA Rank
 
-Unofficial ranking page for ETNA
+Unofficial ranking page for ETNA students.
+
+## Why ?
+
+ETNA-rank allows you to keep track of your Grade Point Average (GPA) for your current year of formation.
+
+## Why we need to ask for your password ?
+
+We first tried to build ETNA-rank as an app-only project. However, built-in securities in all major browsers [don't allow for cross-site authentication token retrieval](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html).
+
+**Your password is NEVER stored.** You can check our code.
+
+If you're still afraid about us storing your password, run the project by yourself following the steps below. But again : we - don't - store - your - password.
 
 ## Run the project (development)
 
@@ -17,6 +29,10 @@ Access to the app at `https://localhost:10102`
 
 This build is for making sure etna-rank is self-contained with all necessary dependencies and configuration to be deployed for production as well as being ready for Kubernetes.
 
+<details>
+<summary>Steps for running the project as staging</summary>
+<br>
+
 Run each of these commands one after the other :
 
 ```bash
@@ -32,3 +48,5 @@ docker-compose -f prod.docker-compose.yml up -d
 ```
 
 Access to the app at `https://localhost:10102`
+
+</details>
