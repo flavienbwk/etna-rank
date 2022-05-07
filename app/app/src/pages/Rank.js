@@ -82,7 +82,7 @@ export const Rank = () => {
         </Grid>
         <Grid item md={4}>
           <Typography>Connecté(e) en tant que <b>{login}</b></Typography>
-          <Typography>Dernière mise à jour : {getDateFromTimestamp(promo?.saved_at)}</Typography>
+          <Typography>Dernière mise à jour : {promo ? getDateFromTimestamp(promo.saved_at) : <CircularProgress size={16} />}</Typography>
 
         </Grid>
         <Grid item xs={12}>

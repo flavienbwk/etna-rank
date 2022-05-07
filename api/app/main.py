@@ -10,6 +10,7 @@ from pydantic import BaseModel
 app = FastAPI()
 
 REFETCH_DELAY = int(os.getenv("REFETCH_DELAY", 3600))
+INCLUDE_FDI_GRADES = True if os.getenv("INCLUDE_FDI_GRADES", "true") == "true" else False
 CACHE_DIRECTORY = "/tmp/etna-rank/cache"
 
 Path(CACHE_DIRECTORY).mkdir(parents=True, exist_ok=True)
@@ -42,6 +43,7 @@ async def identity(request: Request):
     res = requests.get("https://auth.etna-alternance.net/", cookies=request.cookies)
 
     if res.status_code != 200:
+        print(res.reason)
         raise HTTPException(status_code=res.status_code, detail=res.reason)
 
     response_details = res.json()
@@ -64,6 +66,9 @@ def get_student_marks(cookies, promo_id: str, student_login: str):
     average: float = 0
 
     for mark in marks_res.json():
+        if INCLUDE_FDI_GRADES == False:
+            if mark["uv_name"].startswith("FDI"):
+                continue
         if "student_mark" in mark and mark["student_mark"] is not None:
             average += float(mark["student_mark"])
             notes += 1

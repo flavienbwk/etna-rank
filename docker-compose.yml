@@ -27,6 +27,7 @@ services:
       NODE_ENV: "development"
       CHOKIDAR_USEPOLLING: "true"
       REFETCH_DELAY: 3600
+      INCLUDE_FDI_GRADES: "false"
 
   app:
     build: ./app
