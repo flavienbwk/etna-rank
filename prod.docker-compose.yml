@@ -1,6 +1,19 @@
 version: "3"
 
 services:
+
+  # Using NGINX to get single endpoint for app and API
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: prod.Dockerfile
+    restart: always
+    ports:
+      - "8080:443"
+    volumes:
+      - ./certs:/etc/nginx/certificates
+      - ./logs/nginx:/var/log/nginx
+
   api:
     build:
       context: ./api
@@ -23,17 +36,3 @@ services:
       CHOKIDAR_USEPOLLING: "false"
     depends_on:
       - nginx
-
-  nginx:
-    build:
-      context: ./nginx
-      dockerfile: prod.Dockerfile
-    restart: always
-    ports:
-      - "8080:443"
-    volumes:
-      - ./certs:/etc/nginx/certificates
-      - nginx_logs:/var/log/nginx
-
-volumes:
-  nginx_logs:
