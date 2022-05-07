@@ -1,0 +1,106 @@
+from functools import reduce
+import requests
+
+from fastapi import FastAPI, HTTPException, Request
+from pydantic import BaseModel
+
+app = FastAPI()
+
+
+class User(BaseModel):
+    login: str
+    password: str
+
+    def toJson(self):
+        return {"login": self.login, "password": self.password}
+
+
+@app.post("/api/login")
+async def login(user: User):
+    res = requests.post("https://auth.etna-alternance.net/login",
+                        headers={"Content-Type": "application/json"}, json=user.toJson())
+
+    if res.status_code != 200:
+        raise HTTPException(status_code=res.status_code, detail=res.reason)
+
+    return {"authenticator": res.cookies.get("authenticator")}
+
+
+@app.get("/api/identity")
+async def identity(request: Request):
+    res = requests.get(
+        "https://auth.etna-alternance.net/", cookies=request.cookies)
+
+    if res.status_code != 200:
+        raise HTTPException(status_code=res.status_code, detail=res.reason)
+
+    return {"authenticator": res.cookies.get("authenticator")}
+
+
+def get_student_marks(cookies, promo_id: str, student_login: str):
+    marks_res = requests.get(
+        "https://intra-api.etna-alternance.net/terms/" + promo_id + "/students/" + student_login + "/marks", cookies=cookies)
+
+    if marks_res.status_code != 200:
+        raise HTTPException(
+            status_code=marks_res.status_code, detail=marks_res.reason)
+
+    notes: int = 0
+    average: float = 0
+
+    print("\n", student_login, "\n", flush=True)
+
+    for mark in marks_res.json():
+        if "student_mark" in mark and mark["student_mark"] is not None:
+            print(mark["student_mark"], flush=True)
+            average += float(mark["student_mark"])
+            notes += 1
+
+    return average / float(notes), notes
+
+
+@app.get("/api/promo")
+async def get_promo(request: Request):
+    promo_res = requests.get(
+        "https://intra-api.etna-alternance.net/promo", cookies=request.cookies)
+
+    if promo_res.status_code != 200:
+        raise HTTPException(
+            status_code=promo_res.status_code, detail=promo_res.reason)
+
+    promo_id = str(promo_res.json()[0]["id"])
+
+    trombi_res = requests.get(
+        "https://intra-api.etna-alternance.net/trombi/" + promo_id, cookies=request.cookies)
+
+    if trombi_res.status_code != 200:
+        raise HTTPException(
+            status_code=trombi_res.status_code, detail=trombi_res.reason)
+
+    trombi = trombi_res.json()
+
+    students = []
+    promo_average = 0
+
+    for student in trombi["students"]:
+        try:
+            average, notes = get_student_marks(
+                request.cookies, promo_id, student["login"])
+        except HTTPException as e:
+            raise e
+        students.append({
+            "id": student["login"],
+            "name": student["firstname"] + " " + student["lastname"],
+            "login": student["login"],
+            "notes": notes,
+            "average": average
+        })
+        promo_average += average
+
+    students.sort(key=lambda x: x["average"], reverse=True)
+
+    return {"details": {
+        "title": trombi["term"]["wall_name"],
+        "grade": trombi["term"]["target_name"],
+        "average": promo_average / float(len(students))
+    }, "students": students}
