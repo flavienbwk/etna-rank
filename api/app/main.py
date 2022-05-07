@@ -1,14 +1,18 @@
-from time import time
-import os
 import json
-import requests
+import os
+from pathlib import Path
+from time import time
 
+import requests
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
 app = FastAPI()
 
 REFETCH_DELAY = int(os.getenv("REFETCH_DELAY", 3600))
+CACHE_DIRECTORY = "/tmp/etna-rank/cache"
+
+Path(CACHE_DIRECTORY).mkdir(parents=True, exist_ok=True)
 
 
 class User(BaseModel):
@@ -21,8 +25,11 @@ class User(BaseModel):
 
 @app.post("/api/login")
 async def login(user: User):
-    res = requests.post("https://auth.etna-alternance.net/login",
-                        headers={"Content-Type": "application/json"}, json=user.toJson())
+    res = requests.post(
+        "https://auth.etna-alternance.net/login",
+        headers={"Content-Type": "application/json"},
+        json=user.toJson(),
+    )
 
     if res.status_code != 200:
         raise HTTPException(status_code=res.status_code, detail=res.reason)
@@ -32,8 +39,7 @@ async def login(user: User):
 
 @app.get("/api/identity")
 async def identity(request: Request):
-    res = requests.get(
-        "https://auth.etna-alternance.net/", cookies=request.cookies)
+    res = requests.get("https://auth.etna-alternance.net/", cookies=request.cookies)
 
     if res.status_code != 200:
         raise HTTPException(status_code=res.status_code, detail=res.reason)
@@ -43,11 +49,12 @@ async def identity(request: Request):
 
 def get_student_marks(cookies, promo_id: str, student_login: str):
     marks_res = requests.get(
-        "https://intra-api.etna-alternance.net/terms/" + promo_id + "/students/" + student_login + "/marks", cookies=cookies)
+        f"https://intra-api.etna-alternance.net/terms/{promo_id}/students/{student_login}/marks",
+        cookies=cookies,
+    )
 
     if marks_res.status_code != 200:
-        raise HTTPException(
-            status_code=marks_res.status_code, detail=marks_res.reason)
+        raise HTTPException(status_code=marks_res.status_code, detail=marks_res.reason)
 
     notes: int = 0
     average: float = 0
@@ -61,12 +68,12 @@ def get_student_marks(cookies, promo_id: str, student_login: str):
 
 
 def savePromo(promo_id: str, data: str):
-    with open("/tmp/promo_" + promo_id + ".json", "w") as fp:
+    with open(f"{CACHE_DIRECTORY}/promo_{promo_id}.json", "w+") as fp:
         fp.write(data)
 
 
 def loadPromo(promo_id: str):
-    url = "/tmp/promo_" + promo_id + ".json"
+    url = f"{CACHE_DIRECTORY}/promo_{promo_id}.json"
     if os.path.exists(url) is False:
         return None
 
@@ -82,11 +89,11 @@ def loadPromo(promo_id: str):
 @app.get("/api/promo")
 async def get_promo(request: Request):
     promo_res = requests.get(
-        "https://intra-api.etna-alternance.net/promo", cookies=request.cookies)
+        "https://intra-api.etna-alternance.net/promo", cookies=request.cookies
+    )
 
     if promo_res.status_code != 200:
-        raise HTTPException(
-            status_code=promo_res.status_code, detail=promo_res.reason)
+        raise HTTPException(status_code=promo_res.status_code, detail=promo_res.reason)
 
     promo_id = str(promo_res.json()[0]["id"])
 
@@ -95,11 +102,14 @@ async def get_promo(request: Request):
         return promo
 
     trombi_res = requests.get(
-        "https://intra-api.etna-alternance.net/trombi/" + promo_id, cookies=request.cookies)
+        f"https://intra-api.etna-alternance.net/trombi/{promo_id}",
+        cookies=request.cookies,
+    )
 
     if trombi_res.status_code != 200:
         raise HTTPException(
-            status_code=trombi_res.status_code, detail=trombi_res.reason)
+            status_code=trombi_res.status_code, detail=trombi_res.reason
+        )
 
     trombi = trombi_res.json()
 
@@ -109,25 +119,32 @@ async def get_promo(request: Request):
     for student in trombi["students"]:
         try:
             average, notes = get_student_marks(
-                request.cookies, promo_id, student["login"])
+                request.cookies, promo_id, student["login"]
+            )
         except HTTPException as e:
             raise e
-        students.append({
-            "id": student["login"],
-            "name": student["firstname"] + " " + student["lastname"],
-            "login": student["login"],
-            "notes": notes,
-            "average": average
-        })
+        students.append(
+            {
+                "id": student["login"],
+                "name": f"{student['firstname']} {student['lastname']}",
+                "login": student["login"],
+                "notes": notes,
+                "average": average,
+            }
+        )
         promo_average += average
 
     students.sort(key=lambda x: x["average"], reverse=True)
 
-    result = {"saved_at": time(), "details": {
-        "title": trombi["term"]["wall_name"],
-        "grade": trombi["term"]["target_name"],
-        "average": promo_average / float(len(students))
-    }, "students": students}
+    result = {
+        "saved_at": time(),
+        "details": {
+            "title": trombi["term"]["wall_name"],
+            "grade": trombi["term"]["target_name"],
+            "average": promo_average / float(len(students)),
+        },
+        "students": students,
+    }
 
     savePromo(promo_id, json.dumps(result))
 

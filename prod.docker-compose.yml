@@ -23,6 +23,8 @@ services:
       context: ./api
       dockerfile: prod.Dockerfile
     restart: always
+    volumes:
+      - ./cache:/tmp/etna-rank/cache
     environment:
       NODE_ENV: "production"
       CHOKIDAR_USEPOLLING: "false"
