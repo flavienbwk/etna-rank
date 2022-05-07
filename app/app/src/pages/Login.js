@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Stack, TextField, Container, Grid } from "@mui/material";
+import { Button, Stack, TextField, Container, Grid, Typography } from "@mui/material";
 import { useCookies } from "react-cookie";
 
 import { Notifier } from "../utils/Notifier";
@@ -48,7 +48,7 @@ export const Login = () => {
     <Container>
       <Grid container justifyContent="center">
         <Stack spacing={2}>
-        <img src="logo512.png" style={{ maxWidth: '256px', display: "center" }} alt="ETNA Rank logo" />
+          <img src="logo512.png" style={{ maxWidth: '256px' }} alt="ETNA Rank logo" />
           <TextField
             label="Nom d'utilisateur"
             value={login}
@@ -63,6 +63,7 @@ export const Login = () => {
           <Button variant="contained" onClick={fetchRank}>
             Se connecter
           </Button>
+          <Typography>Suivez et contribuez au projet sur <a href="https://github.com/flavienbwk/etna-rank" rel="noreferrer" target="_blank">GitHub</a></Typography>
         </Stack>
       </Grid>
     </Container>
