@@ -8,7 +8,7 @@ WORKDIR /app
 COPY ./app /app
 
 RUN npm install
-RUN npm run build --production
+RUN npm run build --production --omit=dev
 
 # Stage 2 : serve
 FROM node:18.1.0-alpine
