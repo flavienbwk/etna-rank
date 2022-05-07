@@ -21,6 +21,7 @@ services:
     build: ./api
     restart: unless-stopped
     volumes:
+      - ./cache:/tmp/etna-rank/cache
       - ./api/app:/app
     environment:
       NODE_ENV: "development"
@@ -31,7 +32,6 @@ services:
     build: ./app
     restart: unless-stopped
     volumes:
-      - ./cache:/tmp/etna-rank/cache
       - ./app/app:/app
     environment:
       NODE_ENV: "development"
