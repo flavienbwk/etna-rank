@@ -1,10 +1,14 @@
-from functools import reduce
+from time import time
+import os
+import json
 import requests
 
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
 app = FastAPI()
+
+REFETCH_DELAY = os.getenv("REFETCH_DELAY", 3600)
 
 
 class User(BaseModel):
@@ -48,15 +52,31 @@ def get_student_marks(cookies, promo_id: str, student_login: str):
     notes: int = 0
     average: float = 0
 
-    print("\n", student_login, "\n", flush=True)
-
     for mark in marks_res.json():
         if "student_mark" in mark and mark["student_mark"] is not None:
-            print(mark["student_mark"], flush=True)
             average += float(mark["student_mark"])
             notes += 1
 
     return average / float(notes), notes
+
+
+def savePromo(promo_id: str, data: str):
+    with open("/tmp/promo_" + promo_id + ".json", "w") as fp:
+        fp.write(data)
+
+
+def loadPromo(promo_id: str):
+    url = "/tmp/promo_" + promo_id + ".json"
+    if os.path.exists(url) is False:
+        return None
+
+    with open(url, "r") as fp:
+        data = json.load(fp)
+
+    if "saved_at" not in data or time() > data["saved_at"] + REFETCH_DELAY:
+        return None
+
+    return data
 
 
 @app.get("/api/promo")
@@ -69,6 +89,10 @@ async def get_promo(request: Request):
             status_code=promo_res.status_code, detail=promo_res.reason)
 
     promo_id = str(promo_res.json()[0]["id"])
+
+    promo = loadPromo(promo_id)
+    if promo is not None:
+        return promo
 
     trombi_res = requests.get(
         "https://intra-api.etna-alternance.net/trombi/" + promo_id, cookies=request.cookies)
@@ -99,8 +123,12 @@ async def get_promo(request: Request):
 
     students.sort(key=lambda x: x["average"], reverse=True)
 
-    return {"details": {
+    result = {"saved_at": time(), "details": {
         "title": trombi["term"]["wall_name"],
         "grade": trombi["term"]["target_name"],
         "average": promo_average / float(len(students))
     }, "students": students}
+
+    savePromo(promo_id, json.dumps(result))
+
+    return result

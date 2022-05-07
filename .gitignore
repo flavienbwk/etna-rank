@@ -6,3 +6,5 @@ web/app/node_modules/
 logs/
 
 certs/
+
+__pycache__

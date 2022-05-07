@@ -9,6 +9,7 @@ services:
     environment:
       NODE_ENV: "production"
       CHOKIDAR_USEPOLLING: "false"
+      REFETCH_DELAY: 3600
     depends_on:
       - nginx
 
