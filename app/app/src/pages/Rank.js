@@ -61,15 +61,29 @@ export const Rank = () => {
     []
   );
 
+  const getDateFromTimestamp = (timestamp) => {
+    if (timestamp == null)
+      return ""
+    return new Intl.DateTimeFormat('fr-FR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(parseInt(timestamp) * 1000)
+  }
+
   return (
     <Container>
       <Grid container spacing={2}>
-        <Grid item md={9}>
+        <Grid item md={8}>
           <Typography variant="h5">{promo?.details?.title}</Typography>
           <Typography variant="h6">{promo?.details?.grade}</Typography>
         </Grid>
-        <Grid item md={3} >
+        <Grid item md={4}>
           <Typography>Connecté(e) en tant que <b>{login}</b></Typography>
+          <Typography>Dernière mise à jour : {getDateFromTimestamp(promo?.saved_at)}</Typography>
+
         </Grid>
         <Grid item xs={12}>
           <Stack
