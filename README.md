@@ -9,7 +9,7 @@ Unofficial ranking page for ETNA students.
 
 ## Why ?
 
-ETNA-rank allows you to keep track of your Grade Point Average (GPA) for your current year of formation.
+ETNA-rank allows you to keep track of your Grade Point Average (GPA) for your current year of formation. You need an ETNA account to log-in.
 
 :point_right: Want to contribute ? Feel free to open a pull request or fill an issue !
 
