@@ -2,13 +2,16 @@
 
 ![ETNA Rank logo](./app/app/public/logo192.png)
 
+[![Dev build](https://github.com/flavienbwk/etna-rank/actions/workflows/build-dev.yaml/badge.svg)](https://github.com/flavienbwk/etna-rank/actions/workflows/build-dev.yaml)
+[![Prod build](https://github.com/flavienbwk/etna-rank/actions/workflows/build-prod.yaml/badge.svg)](https://github.com/flavienbwk/etna-rank/actions/workflows/build-prod.yaml)
+
 Unofficial ranking page for ETNA students.
 
 ## Why ?
 
 ETNA-rank allows you to keep track of your Grade Point Average (GPA) for your current year of formation.
 
-:point_right: Want to contribute ? Feel free to open a pull request or an issue !
+:point_right: Want to contribute ? Feel free to open a pull request or fill an issue !
 
 ## Why we need to ask for your password ?
 
