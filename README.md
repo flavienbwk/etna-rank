@@ -1,6 +1,6 @@
 # ETNA Rank
 
-<center>
+<p align="center">
 
 [![Dev build](https://github.com/flavienbwk/etna-rank/actions/workflows/build-dev.yaml/badge.svg)](https://github.com/flavienbwk/etna-rank/actions/workflows/build-dev.yaml)
 [![Prod build](https://github.com/flavienbwk/etna-rank/actions/workflows/build-prod.yaml/badge.svg)](https://github.com/flavienbwk/etna-rank/actions/workflows/build-prod.yaml)
@@ -9,7 +9,7 @@ Unofficial ranking page for ETNA students.
 
 ![ETNA Rank logo](./app/app/public/logo192.png)
 
-</center>
+</p>
 
 ## Why ?
 
