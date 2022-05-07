@@ -44,7 +44,11 @@ async def identity(request: Request):
     if res.status_code != 200:
         raise HTTPException(status_code=res.status_code, detail=res.reason)
 
-    return {"authenticator": res.cookies.get("authenticator")}
+    response_details = res.json()
+    return {
+        "authenticator": res.cookies.get("authenticator"),
+        "login": response_details["login"],
+    }
 
 
 def get_student_marks(cookies, promo_id: str, student_login: str):

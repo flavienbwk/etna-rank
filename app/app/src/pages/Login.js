@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Stack, TextField } from "@mui/material";
+import { Button, Stack, TextField, Container } from "@mui/material";
 import { useCookies } from "react-cookie";
 
 import { Notifier } from "../utils/Notifier";
@@ -45,21 +45,23 @@ export const Login = () => {
   }, [cookies, setCookie, removeCookie, navigate]);
 
   return (
-    <Stack spacing={2}>
-      <TextField
-        label="Nom d'utilisateur"
-        value={login}
-        onChange={(event) => setLogin(event.target.value)}
-      />
-      <TextField
-        label="Mot de passe"
-        type="password"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-      />
-      <Button variant="contained" onClick={fetchRank}>
-        Se connecter
-      </Button>
-    </Stack>
+    <Container>
+      <Stack spacing={2}>
+        <TextField
+          label="Nom d'utilisateur"
+          value={login}
+          onChange={(event) => setLogin(event.target.value)}
+        />
+        <TextField
+          label="Mot de passe"
+          type="password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+        />
+        <Button variant="contained" onClick={fetchRank}>
+          Se connecter
+        </Button>
+      </Stack>
+    </Container>
   );
 };
