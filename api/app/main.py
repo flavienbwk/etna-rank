@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-REFETCH_DELAY = os.getenv("REFETCH_DELAY", 3600)
+REFETCH_DELAY = int(os.getenv("REFETCH_DELAY", 3600))
 
 
 class User(BaseModel):
