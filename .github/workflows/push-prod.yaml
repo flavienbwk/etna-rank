@@ -1,0 +1,64 @@
+name: Push prod images
+
+on:
+  push:
+    branches:
+      - test-ci # remove when tested
+      - master
+
+jobs:
+
+  build-linux:
+    name: Push prod docker images
+    runs-on: ubuntu-20.04
+
+    steps:
+
+      - name: Extract branch name
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+        id: extract_branch
+
+      - name: Extract branch name on pull request
+        if: github.event_name == 'pull_request'
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+          ref: ${{ env.BRANCH_NAME }}
+
+      - name: Get etna-rank version
+        run: |
+          # Get version from VERSION file
+          version=$(sed -rn 's/^  "version": "([0-9.]+)",/\1/p' ./app/app/package.json)
+          echo "ETNA_RANK_VERSION=$version" >> $env:GITHUB_ENV
+      
+      - name: Push latest images
+        run: |
+          docker build ./nginx -f ./nginx/k8s.Dockerfile -t ghcr.io/flavienbwk/etna-rank/nginx:latest
+          docker tag ghcr.io/flavienbwk/etna-rank/nginx:latest ghcr.io/flavienbwk/etna-rank/nginx:${{ env.ETNA_RANK_VERSION }}
+          docker push ghcr.io/flavienbwk/etna-rank/nginx:latest
+          docker push ghcr.io/flavienbwk/etna-rank/nginx:${{ env.ETNA_RANK_VERSION }}
+
+          docker build ./app -f ./app/prod.Dockerfile -t ghcr.io/flavienbwk/etna-rank/app:latest
+          docker tag ghcr.io/flavienbwk/etna-rank/app:latest ghcr.io/flavienbwk/etna-rank/app:${{ env.ETNA_RANK_VERSION }}
+          docker push ghcr.io/flavienbwk/etna-rank/app:latest
+          docker push ghcr.io/flavienbwk/etna-rank/app:${{ env.ETNA_RANK_VERSION }}
+
+          docker build ./api -f ./api/prod.Dockerfile -t ghcr.io/flavienbwk/etna-rank/api:latest
+          docker tag ghcr.io/flavienbwk/etna-rank/api:latest ghcr.io/flavienbwk/etna-rank/api:${{ env.ETNA_RANK_VERSION }}
+          docker push ghcr.io/flavienbwk/etna-rank/api:latest
+          docker push ghcr.io/flavienbwk/etna-rank/api:${{ env.ETNA_RANK_VERSION }}
+
+      # Create release on master
+      - name: Creating release
+        uses: softprops/action-gh-release@v1
+        if: github.ref == 'refs/heads/master' && github.event.pull_request.merged == false
+        with:
+          name: ${{ env.ETNA_RANK_VERSION }}
+          tag_name: ${{ env.ETNA_RANK_VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
