@@ -18,19 +18,24 @@ spec:
         app: nginx
     spec:
       containers:
-        - image: flavienb/etna-rank:latest
+        - image: ghcr.io/flavienbwk/etna-rank/nginx:latest
           name: nginx
           ports:
-            - containerPort: 80
+            - containerPort: 443
           imagePullPolicy: Always
           volumeMounts:
             - mountPath: /var/log/nginx
               name: nginx-logs-pvc
+            - mountPath: /etc/nginx/certificates
+              name: nginx-certs-pvc
           resources: {}
       volumes:
         - name: nginx-logs-pvc
           persistentVolumeClaim:
             claimName: nginx-logs-pvc
+        - name: nginx-certs-pvc
+          persistentVolumeClaim:
+            claimName: nginx-certs-pvc
       restartPolicy: Always
 status: {}
 ---
@@ -44,7 +49,7 @@ metadata:
 spec:
   ports:
     - port: 8080
-      targetPort: 80
+      targetPort: 443
   selector:
     app: nginx
 status:

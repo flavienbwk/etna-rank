@@ -57,3 +57,47 @@ docker-compose -f prod.docker-compose.yml up -d
 Access to the app at `https://localhost:10102`
 
 </details>
+
+## Run the project (production)
+
+:warning: We recommend using [Kubernetes Kapsules from Scaleway](https://scaleway.com). At this step, we expect you to have a working Kubernetes configuration with Ingress installed.
+
+<details>
+<summary>Steps for running the project with Kubernetes</summary>
+<br>
+
+1. Create namespace
+
+    ```bash
+    kubectl create ns etna-rank
+    ```
+
+2. Update ingress endpoint
+
+    In [`./k8s/ingress.yaml`](./k8s/ingress.yaml), edit the `964c196d-dee5-41e2-b8ae-a11acfbdd425.nodes.k8s.fr-par.scw.cloud` prefix accordingly to your Scaleway configuration.
+
+3. Tagging and pushing images (ETNA-rank development team only)
+
+    First, you need a [container Registry](https://console.scaleway.com/registry) to then tag your images. Here is an example :
+
+    ```bash
+    # Nginx container
+    docker build ./nginx -f ./nginx/k8s.Dockerfile -t ghcr.io/flavienbwk/etna-rank/nginx:latest
+    docker push ghcr.io/flavienbwk/etna-rank/nginx:latest
+
+    # App container
+    docker build ./app -f ./app/prod.Dockerfile -t ghcr.io/flavienbwk/etna-rank/app:latest
+    docker push ghcr.io/flavienbwk/etna-rank/app:latest
+
+    # API container
+    docker build ./api -f ./api/prod.Dockerfile -t ghcr.io/flavienbwk/etna-rank/api:latest
+    docker push ghcr.io/flavienbwk/etna-rank/api:latest
+    ```
+
+4. Run etna-rank (app & API)
+
+    ```bash
+    kubectl apply -f ./k8s
+    ```
+
+</details>

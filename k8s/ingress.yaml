@@ -5,9 +5,11 @@ metadata:
     name: ingress-nginx
   namespace: etna-rank
   name: ingress-nginx
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   rules:
-  - host: app.21a6c45e-0efa-4ac9-8bbb-8b7fc76d40f5.nodes.k8s.fr-par.scw.cloud
+  - host: etna-rank.964c196d-dee5-41e2-b8ae-a11acfbdd425.nodes.k8s.fr-par.scw.cloud
     http:
       paths:
       - path: /
@@ -16,4 +18,4 @@ spec:
           service:
             name: nginx
             port:
-              number: 80
+              number: 443

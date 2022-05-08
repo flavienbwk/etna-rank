@@ -26,8 +26,6 @@ services:
     volumes:
       - ./cache:/tmp/etna-rank/cache
     environment:
-      NODE_ENV: "production"
-      CHOKIDAR_USEPOLLING: "false"
       REFETCH_DELAY: 3600
       INCLUDE_FDI_GRADES: "false"
 

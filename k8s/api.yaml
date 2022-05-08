@@ -3,37 +3,44 @@ kind: Deployment
 metadata:
   namespace: etna-rank
   labels:
-    app: app
-  name: app
+    app: api
+  name: api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app
+      app: api
   strategy: {}
   template:
     metadata:
       labels:
-        app: app
+        app: api
     spec:
       containers:
         - env:
-            - name: NODE_ENV
+            - name: INCLUDE_FDI_GRADES
               valueFrom:
                 configMapKeyRef:
-                  key: NODE_ENV
+                  key: INCLUDE_FDI_GRADES
                   name: env
-            - name: CHOKIDAR_USEPOLLING
+            - name: REFETCH_DELAY
               valueFrom:
                 configMapKeyRef:
-                  key: CHOKIDAR_USEPOLLING
+                  key: REFETCH_DELAY
                   name: env
-          image: ghcr.io/flavienbwk/etna-rank/app:latest
-          name: app
+          image: ghcr.io/flavienbwk/etna-rank/api:latest
+          name: api
           ports:
-            - containerPort: 8080
+            - containerPort: 80
           imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/log/nginx
+              name: api-cache-pvc
           resources: {}
+      volumes:
+        - name: api-cache-pvc
+          persistentVolumeClaim:
+            claimName: api-cache-pvc
       restartPolicy: Always
 status: {}
 ---
@@ -42,15 +49,15 @@ kind: Service
 metadata:
   namespace: etna-rank
   labels:
-    app: app
-  name: app
+    app: api
+  name: api
 spec:
   ports:
-    - port: 8080 # Port accessible inside cluster
-      targetPort: 8080 # Port to forward to inside the pod
+    - port: 80 # Port accessible inside cluster
+      targetPort: 80 # Port to forward to inside the pod
       protocol: TCP
       name: http
   selector:
-    app: app
+    app: api
 status:
   loadBalancer: {}

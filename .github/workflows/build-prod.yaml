@@ -33,7 +33,10 @@ jobs:
           submodules: 'true'
           ref: ${{ env.BRANCH_NAME }}
 
-      - name: Build
+      - name: Build prod
         run: |
           docker-compose -f prod.docker-compose.yml build
-    
+
+      - name: Build NGINX K8S conf
+        run: |
+          docker build ./nginx -f ./nginx/k8s.Dockerfile -t ghcr.io/flavienbwk/etna-rank/nginx:ci-devel
