@@ -32,9 +32,9 @@ jobs:
 
       - name: Get etna-rank version
         run: |
-          # Get version from VERSION file
           version=$(sed -rn 's/^  "version": "([0-9.]+)",/\1/p' ./app/app/package.json)
           echo "ETNA_RANK_VERSION=$version" >> $env:GITHUB_ENV
+          echo "ETNA Rank will be pushed in : ${ETNA_RANK_VERSION}"
       
       - name: Push latest images
         run: |
