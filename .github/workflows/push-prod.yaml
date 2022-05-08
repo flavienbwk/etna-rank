@@ -3,8 +3,7 @@ name: Push prod images
 on:
   push:
     branches:
-      - test-ci # remove when tested
-      - master
+      - main
 
 jobs:
 
