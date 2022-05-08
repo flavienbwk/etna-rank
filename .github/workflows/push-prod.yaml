@@ -65,7 +65,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: github.ref == 'refs/heads/main' && github.event.pull_request.merged == false
         with:
-          name: $ETNA_RANK_VERSION
-          tag_name: $ETNA_RANK_VERSION
+          name: ${{ env.ETNA_RANK_VERSION }}
+          tag_name: ${{ env.ETNA_RANK_VERSION }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
