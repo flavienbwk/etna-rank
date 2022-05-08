@@ -53,6 +53,8 @@ jobs:
           docker tag ghcr.io/flavienbwk/etna-rank/api:latest ghcr.io/flavienbwk/etna-rank/api:$ETNA_RANK_VERSION
           docker push ghcr.io/flavienbwk/etna-rank/api:latest
           docker push ghcr.io/flavienbwk/etna-rank/api:$ETNA_RANK_VERSION
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       # Create release on master
       - name: Creating release
