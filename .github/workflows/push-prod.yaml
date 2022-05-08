@@ -60,10 +60,10 @@ jobs:
           docker push ghcr.io/flavienbwk/etna-rank/api:latest
           docker push ghcr.io/flavienbwk/etna-rank/api:$ETNA_RANK_VERSION
 
-      # Create release on master
+      # Create release on main
       - name: Creating release
         uses: softprops/action-gh-release@v1
-        if: github.ref == 'refs/heads/master' && github.event.pull_request.merged == false
+        if: github.ref == 'refs/heads/main' && github.event.pull_request.merged == false
         with:
           name: $ETNA_RANK_VERSION
           tag_name: $ETNA_RANK_VERSION
