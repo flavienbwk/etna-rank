@@ -34,10 +34,11 @@ jobs:
         run: |
           version=$(sed -rn 's/^  "version": "([0-9.]+)",/\1/p' ./app/app/package.json)
           echo "ETNA_RANK_VERSION=$version" >> $env:GITHUB_ENV
-          echo "ETNA Rank will be pushed in : $version"
       
       - name: Push latest images
         run: |
+          echo "ETNA Rank will be pushed in : $ETNA_RANK_VERSION"
+
           docker build ./nginx -f ./nginx/k8s.Dockerfile -t ghcr.io/flavienbwk/etna-rank/nginx:latest
           docker tag ghcr.io/flavienbwk/etna-rank/nginx:latest ghcr.io/flavienbwk/etna-rank/nginx:$ETNA_RANK_VERSION
           docker push ghcr.io/flavienbwk/etna-rank/nginx:latest
