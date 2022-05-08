@@ -48,7 +48,7 @@ export const Login = () => {
     <Container>
       <Grid container justifyContent="center">
         <Stack spacing={2}>
-          <img src="logo512.png" style={{ maxWidth: '256px' }} alt="ETNA Rank logo" />
+          <img src="logo512.png" style={{ maxWidth: '256px', marginLeft: "auto", marginRight: "auto" }} alt="ETNA Rank logo" />
           <TextField
             label="Nom d'utilisateur"
             value={login}
