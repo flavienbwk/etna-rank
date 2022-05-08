@@ -1,0 +1,11 @@
+.vscode/
+
+.env
+
+web/app/node_modules/
+logs/
+
+certs/
+cache/
+
+__pycache__

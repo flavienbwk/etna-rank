@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: etna-rank
+  labels:
+    app: app
+  name: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  key: NODE_ENV
+                  name: env
+            - name: CHOKIDAR_USEPOLLING
+              valueFrom:
+                configMapKeyRef:
+                  key: CHOKIDAR_USEPOLLING
+                  name: env
+          image: ghcr.io/flavienbwk/etna-rank/app:latest
+          name: app
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: etna-rank
+  labels:
+    app: app
+  name: app
+spec:
+  ports:
+    - port: 8080 # Port accessible inside cluster
+      targetPort: 8080 # Port to forward to inside the pod
+      protocol: TCP
+      name: http
+  selector:
+    app: app
+status:
+  loadBalancer: {}

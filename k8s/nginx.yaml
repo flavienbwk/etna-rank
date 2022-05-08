@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: etna-rank
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - image: ghcr.io/flavienbwk/etna-rank/nginx:latest
+          name: nginx
+          ports:
+            - containerPort: 443
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/log/nginx
+              name: nginx-logs-pvc
+            - mountPath: /etc/nginx/certificates
+              name: nginx-certs-pvc
+          resources: {}
+      volumes:
+        - name: nginx-logs-pvc
+          persistentVolumeClaim:
+            claimName: nginx-logs-pvc
+        - name: nginx-certs-pvc
+          persistentVolumeClaim:
+            claimName: nginx-certs-pvc
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: etna-rank
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  ports:
+    - port: 8080
+      targetPort: 443
+  selector:
+    app: nginx
+status:
+  loadBalancer: {}

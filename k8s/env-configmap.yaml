@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env
+  namespace: etna-rank
+data:
+  NODE_ENV: "production"
+  CHOKIDAR_USEPOLLING: "false"
+  REFETCH_DELAY: "3600"
+  INCLUDE_FDI_GRADES: "false"

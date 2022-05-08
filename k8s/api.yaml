@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: etna-rank
+  labels:
+    app: api
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - env:
+            - name: INCLUDE_FDI_GRADES
+              valueFrom:
+                configMapKeyRef:
+                  key: INCLUDE_FDI_GRADES
+                  name: env
+            - name: REFETCH_DELAY
+              valueFrom:
+                configMapKeyRef:
+                  key: REFETCH_DELAY
+                  name: env
+          image: ghcr.io/flavienbwk/etna-rank/api:latest
+          name: api
+          ports:
+            - containerPort: 80
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/log/nginx
+              name: api-cache-pvc
+          resources: {}
+      volumes:
+        - name: api-cache-pvc
+          persistentVolumeClaim:
+            claimName: api-cache-pvc
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: etna-rank
+  labels:
+    app: api
+  name: api
+spec:
+  ports:
+    - port: 80 # Port accessible inside cluster
+      targetPort: 80 # Port to forward to inside the pod
+      protocol: TCP
+      name: http
+  selector:
+    app: api
+status:
+  loadBalancer: {}

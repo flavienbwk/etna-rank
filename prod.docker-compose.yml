@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  # Using NGINX to get single endpoint for app and API
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: prod.Dockerfile
+    restart: always
+    ports:
+      - "8080:443"
+    volumes:
+      - ./certs:/etc/nginx/certificates
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      api:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ./api
+      dockerfile: prod.Dockerfile
+    restart: always
+    volumes:
+      - ./cache:/tmp/etna-rank/cache
+    environment:
+      REFETCH_DELAY: 3600
+      INCLUDE_FDI_GRADES: "false"
+
+  app:
+    build:
+      context: ./app
+      dockerfile: prod.Dockerfile
+    restart: always
+    environment:
+      NODE_ENV: "production"
+      CHOKIDAR_USEPOLLING: "false"

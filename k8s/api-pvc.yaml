@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: etna-rank
+  name: api-cache-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: scw-bssd-retain # Specific to Scaleway Kapsule
+  resources:
+    requests:
+      storage: 5Gi
