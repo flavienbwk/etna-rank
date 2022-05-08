@@ -34,7 +34,7 @@ jobs:
         run: |
           version=$(sed -rn 's/^  "version": "([0-9.]+)",/\1/p' ./app/app/package.json)
           echo "ETNA_RANK_VERSION=$version" >> $env:GITHUB_ENV
-          echo "ETNA Rank will be pushed in : $ETNA_RANK_VERSION"
+          echo "ETNA Rank will be pushed in : $version"
       
       - name: Push latest images
         run: |
