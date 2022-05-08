@@ -34,6 +34,13 @@ jobs:
         run: |
           version=$(sed -rn 's/^  "version": "([0-9.]+)",/\1/p' ./app/app/package.json)
           echo "ETNA_RANK_VERSION=$version" >> $GITHUB_ENV
+          
+      - name: Login to GitHub Packages
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Push latest images
         run: |
