@@ -75,8 +75,10 @@ The following role was tested with _Ubuntu 22.04_ only.
 
 ```bash
 # CHANGE remote_host AND ansible_user WITH YOURS
-ansible-playbook -i ./ansible/inventory.ini ./ansible/deployment.yml --extra-vars "ansible_user=root remote_host=51.15.136.115"
+ansible-playbook -i ./ansible/inventory.ini ./ansible/deployment.yml --extra-vars "ansible_user=root remote_host=xxx.xxx.xxx.xxx domain=etna.tk"
 ```
+
+This playbook exposes port `443` of the machine
 
 </details>
 

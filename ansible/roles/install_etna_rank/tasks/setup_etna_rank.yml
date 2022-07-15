@@ -39,6 +39,15 @@
     - openssl dhparam -out ./certs/dhparam.pem 2048
   when: not certs_exist.stat.exists
 
+- name: "Configure ports and domain"
+  become: false
+  shell:
+    cmd: "{{ item }}"
+    chdir: "{{ home_dir_cmd.stdout_lines[0] }}/etna-rank"
+  with_items:
+    - sed -i 's|server_name _;|server_name '{{ domain }}';|g' ./nginx/proxy.conf
+    - sed -i 's|8080:443|443:443|g' ./prod.docker-compose.yml
+
 - name: "Run the project"
   become: false
   shell:
@@ -46,4 +55,5 @@
     chdir: "{{ home_dir_cmd.stdout_lines[0] }}/etna-rank"
   with_items:
     - docker-compose -f prod.docker-compose.yml build
+    - docker-compose -f prod.docker-compose.yml down
     - docker-compose -f prod.docker-compose.yml up -d

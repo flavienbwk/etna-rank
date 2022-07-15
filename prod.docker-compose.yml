@@ -15,7 +15,6 @@ services:
       - ./logs/nginx:/var/log/nginx
     mem_reservation: 10M
     mem_limit: 250M
-    cpus: "0.5"
     depends_on:
       api:
         condition: service_healthy
@@ -35,7 +34,6 @@ services:
       INCLUDE_FDI_GRADES: "false"
     mem_reservation: 10M
     mem_limit: 250M
-    cpus: "1.0"
 
   app:
     image: ${IMAGE_APP:-ghcr.io/flavienbwk/etna-rank/app}:${TAG:-latest}
@@ -47,6 +45,5 @@ services:
         NODE_ENV: "production"
         CHOKIDAR_USEPOLLING: "false"
     restart: always
-    cpus: "0.5"
     mem_reservation: 10M
     mem_limit: 100M
