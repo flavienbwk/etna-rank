@@ -7,11 +7,15 @@ import requests
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from urllib.parse import urlparse
+
+APP_ENDPOINT = os.getenv("APP_ENDPOINT", "")
+APP_ORIGIN = urlparse(APP_ENDPOINT).netloc if APP_ENDPOINT else "*"
 
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["etna.tk", "localhost"],
+    allow_origins=[APP_ORIGIN, "etna.tk", "localhost"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -19,7 +23,7 @@ app.add_middleware(
 
 REFETCH_DELAY = int(os.getenv("REFETCH_DELAY", 3600))
 INCLUDE_FDI_GRADES = (
-    True if os.getenv("INCLUDE_FDI_GRADES", "false") == "true" else False
+    True if os.getenv("INCLUDE_FDI_GRADES", "true") == "true" else False
 )
 CACHE_DIRECTORY = "/tmp/etna-rank/cache"
 
