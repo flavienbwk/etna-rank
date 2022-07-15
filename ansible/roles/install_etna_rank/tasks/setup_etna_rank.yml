@@ -1,0 +1,49 @@
+---
+
+- name: "Prepare remote directory"
+  become: false
+  command: mkdir -p $HOME/etna-rank
+
+- name: "Get remote user home directory"
+  become: false
+  command: echo $HOME
+  register: home_dir_cmd
+
+- name: "Copy local files to remote server"
+  become: false
+  ansible.posix.synchronize:
+    recursive: yes
+    src: ../../../../
+    dest: "{{ home_dir_cmd.stdout_lines[0] }}/etna-rank"
+    rsync_opts:
+      - "--exclude=node_modules"
+      - "--exclude=certs"
+      - "--exclude=cache"
+      - "--exclude=logs"
+      - "--exclude=ansible"
+
+- name: "Check certificates existance"
+  stat:
+    path: "{{ home_dir_cmd.stdout_lines[0] }}/etna-rank/certs/app.crt"
+  register: certs_exist
+
+- name: "Setup certificates"
+  shell:
+    cmd: "{{ item }}"
+    chdir: "{{ home_dir_cmd.stdout_lines[0] }}/etna-rank"
+  with_items:
+    - rm -rf ./certs
+    - mkdir ./certs
+    - chmod 700 ./certs
+    - openssl req -x509 -nodes -subj "/C=FR/ST=IDF/L=Paris/O=flavienbwk" -days 365 -newkey rsa:2048 -keyout ./certs/app.key -out ./certs/app.crt
+    - openssl dhparam -out ./certs/dhparam.pem 2048
+  when: not certs_exist.stat.exists
+
+- name: "Run the project"
+  become: false
+  shell:
+    cmd: "{{ item }}"
+    chdir: "{{ home_dir_cmd.stdout_lines[0] }}/etna-rank"
+  with_items:
+    - docker-compose -f prod.docker-compose.yml build
+    - docker-compose -f prod.docker-compose.yml up -d

@@ -58,12 +58,34 @@ Access to the app at `https://localhost:10102`
 
 </details>
 
-## Run the project (production)
+## Deploy the project (production, Ansible)
+
+:information_source: We recommend using VPS [Instances from Scaleway](https://www.scaleway.com/fr/instances-virtuelles/)
+
+<details>
+<summary>Steps for deploying the project with Ansible</summary>
+<br>
+
+At this step, we expect you to have :
+
+- Ansible [installed](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your machine
+- A configured SSH access with your VPS
+
+The following role was tested with _Ubuntu 22.04_ only.
+
+```bash
+# CHANGE remote_host AND ansible_user WITH YOURS
+ansible-playbook -i ./ansible/inventory.ini ./ansible/deployment.yml --extra-vars "ansible_user=root remote_host=51.15.136.115"
+```
+
+</details>
+
+## Deploy the project (production, K8S)
 
 :warning: We recommend using [Kubernetes Kapsules from Scaleway](https://scaleway.com). At this step, we expect you to have a working Kubernetes configuration with Ingress installed.
 
 <details>
-<summary>Steps for running the project with Kubernetes</summary>
+<summary>Steps for deploying the project with Kubernetes</summary>
 <br>
 
 1. Create namespace
@@ -105,6 +127,10 @@ Access to the app at `https://localhost:10102`
 ## Run the project (production, serverless)
 
 Want to go serverless ? You might want to host this project on [Scaleway Containers](https://www.scaleway.com/fr/serverless-containers/) instances.
+
+<details>
+<summary>Steps for deploying the project serverless</summary>
+<br>
 
 We first need to deploy our API so our app can know what the API endpoint is.
 
@@ -156,3 +182,5 @@ We first need to deploy our API so our app can know what the API endpoint is.
     ```
 
     Deploy your app container.
+
+</details>

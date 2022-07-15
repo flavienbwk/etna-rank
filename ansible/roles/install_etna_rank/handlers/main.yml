@@ -1,0 +1,7 @@
+---
+- name: docker status
+  service: name=docker state=started
+
+- name: docker ps
+  become: false
+  command: docker ps

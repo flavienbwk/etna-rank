@@ -1,0 +1,6 @@
+---
+- hosts: "servers"
+  become: true
+  become_method: sudo
+  roles:
+    - install_etna_rank
