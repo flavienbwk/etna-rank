@@ -167,7 +167,7 @@ We first need to deploy our API so our app can know what the API endpoint is.
     cp .env.example .env
     ```
 
-    In `.env`, edit the `API_ENDPOINT` value with the container endpoint provided to you in the _Container Settings_ tab of your **API** container.
+    In `.env`, edit the `API_ENDPOINT` and `APP_ENDPOINT` values with the container endpoint provided to you in the _Container Settings_ tab of your **API** container.
 
 4. Build and ship the app
 
