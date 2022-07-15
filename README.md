@@ -101,3 +101,58 @@ Access to the app at `https://localhost:10102`
     ```
 
 </details>
+
+## Run the project (production, serverless)
+
+Want to go serverless ? You might want to host this project on [Scaleway Containers](https://www.scaleway.com/fr/serverless-containers/) instances.
+
+We first need to deploy our API so our app can know what the API endpoint is.
+
+1. Get your Container Registry endpoint
+
+    ```bash
+    export SCW_REGISTRY=rg.fr-par.scw.cloud/funcscwetnarankpduzntz8
+    ```
+
+2. Build and ship the API
+
+    In this step we're going to :
+
+    - Build the API image
+    - Tag and push it to your provided Scaleway's Containers Registry
+    - **Retrieve API's URI** (i.e: `https://etnarankpddqzdf6-api.functions.fnc.fr-par.scw.cloud`)
+
+    ```bash
+    _IMAGE_API=$SCW_REGISTRY/api
+    _TAG_API=latest
+    TAG=$_TAG_API IMAGE_API=$_IMAGE_API docker-compose -f prod.docker-compose.yml build api
+    docker push "$_IMAGE_API:$_TAG_API"
+    ```
+
+    Deploy your container with [appropriate env variables](./prod.docker-compose.yml#L28).
+
+3. Defining API endpoint
+
+    Create your `.env` file :
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    In `.env`, edit the `API_ENDPOINT` value with the container endpoint provided to you in the _Container Settings_ tab of your **API** container.
+
+4. Build and ship the app
+
+    In this step we're going to :
+
+    - Build the app image with API endpoint
+    - Tag and push it to your provided Scaleway's Containers Registry
+
+    ```bash
+    _IMAGE_APP=$SCW_REGISTRY/app
+    _IMAGE_TAG=latest
+    TAG=$_IMAGE_TAG IMAGE_APP=$_IMAGE_APP docker-compose -f prod.docker-compose.yml build app
+    docker push "$_IMAGE_APP:$_IMAGE_TAG"
+    ```
+
+    Deploy your app container.

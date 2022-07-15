@@ -5,6 +5,8 @@ import { useCookies } from "react-cookie";
 import { Notifier } from "../utils/Notifier";
 import { useNavigate } from "react-router-dom";
 
+const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT ?? ""
+
 export const Login = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +15,7 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const fetchRank = useCallback(() => {
-    fetch("/api/login", {
+    fetch(`${API_ENDPOINT}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ login: login, password: password }),
@@ -25,7 +27,6 @@ export const Login = () => {
           data.detail ?? "Unable to connect"
         );
       } else {
-        console.log(data.authenticator);
         setCookie("authenticator", data.authenticator);
         navigate("/");
       }
@@ -34,7 +35,7 @@ export const Login = () => {
 
   useEffect(() => {
     if (cookies.authenticator) {
-      fetch("/api/identity").then(async (response) => {
+      fetch(`${API_ENDPOINT}/api/identity`).then(async (response) => {
         if (response.status === 200) {
           navigate("/");
         } else {

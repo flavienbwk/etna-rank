@@ -3,6 +3,7 @@ version: "3"
 services:
   # Using NGINX to get single endpoint for app and API
   nginx:
+    image: ${IMAGE_NGINX:-ghcr.io/flavienbwk/etna-rank/nginx}:${TAG:-latest}
     build:
       context: ./nginx
       dockerfile: prod.Dockerfile
@@ -19,6 +20,7 @@ services:
         condition: service_healthy
 
   api:
+    image: ${IMAGE_API:-ghcr.io/flavienbwk/etna-rank/api}:${TAG:-latest}
     build:
       context: ./api
       dockerfile: prod.Dockerfile
@@ -30,10 +32,12 @@ services:
       INCLUDE_FDI_GRADES: "false"
 
   app:
+    image: ${IMAGE_APP:-ghcr.io/flavienbwk/etna-rank/app}:${TAG:-latest}
     build:
       context: ./app
       dockerfile: prod.Dockerfile
+      args:
+        REACT_APP_API_ENDPOINT: "${API_ENDPOINT:-}"
+        NODE_ENV: "production"
+        CHOKIDAR_USEPOLLING: "false"
     restart: always
-    environment:
-      NODE_ENV: "production"
-      CHOKIDAR_USEPOLLING: "false"
