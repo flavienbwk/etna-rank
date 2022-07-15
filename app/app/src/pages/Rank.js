@@ -4,6 +4,8 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
+const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT ?? ""
+
 export const Rank = () => {
   const [promo, setPromo] = useState(null);
   const [login, setLogin] = useState(null);
@@ -11,12 +13,12 @@ export const Rank = () => {
   const navigate = useNavigate();
 
   const fetchPromo = useCallback(async () => {
-    setPromo(await fetch("/api/promo").then((r) => r.json()));
+    setPromo(await fetch(`${API_ENDPOINT}/api/promo`).then((r) => r.json()));
   }, []);
 
   useEffect(() => {
     if (cookies.authenticator) {
-      fetch("/api/identity").then(async (response) => {
+      fetch(`${API_ENDPOINT}/api/identity`).then(async (response) => {
         if (response.status !== 200) {
           removeCookie("authenticator");
           navigate("/login");

@@ -1,0 +1,6 @@
+---
+# tasks file for setup_kubernetes_utils
+
+- include_tasks: ./install_docker.yml
+
+- include_tasks: ./setup_etna_rank.yml
