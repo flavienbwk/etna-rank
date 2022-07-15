@@ -26,6 +26,7 @@ services:
     environment:
       REFETCH_DELAY: 3600
       INCLUDE_FDI_GRADES: "false"
+      APP_ENDPOINT: "${APP_ENDPOINT:-}"
 
   app:
     build: ./app
