@@ -33,5 +33,6 @@ services:
     volumes:
       - ./app/app:/app
     environment:
+      REACT_APP_API_ENDPOINT: "${API_ENDPOINT:-}"
       NODE_ENV: "development"
       CHOKIDAR_USEPOLLING: "true"

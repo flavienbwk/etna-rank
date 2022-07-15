@@ -1,8 +1,9 @@
-version: "3"
+version: "3.8"
 
 services:
   # Using NGINX to get single endpoint for app and API
   nginx:
+    image: ${IMAGE_NGINX:-ghcr.io/flavienbwk/etna-rank/nginx}:${TAG:-latest}
     build:
       context: ./nginx
       dockerfile: prod.Dockerfile
@@ -12,6 +13,8 @@ services:
     volumes:
       - ./certs:/etc/nginx/certificates
       - ./logs/nginx:/var/log/nginx
+    mem_reservation: 10M
+    mem_limit: 250M
     depends_on:
       api:
         condition: service_healthy
@@ -19,6 +22,7 @@ services:
         condition: service_healthy
 
   api:
+    image: ${IMAGE_API:-ghcr.io/flavienbwk/etna-rank/api}:${TAG:-latest}
     build:
       context: ./api
       dockerfile: prod.Dockerfile
@@ -28,12 +32,18 @@ services:
     environment:
       REFETCH_DELAY: 3600
       INCLUDE_FDI_GRADES: "false"
+    mem_reservation: 10M
+    mem_limit: 250M
 
   app:
+    image: ${IMAGE_APP:-ghcr.io/flavienbwk/etna-rank/app}:${TAG:-latest}
     build:
       context: ./app
       dockerfile: prod.Dockerfile
+      args:
+        REACT_APP_API_ENDPOINT: "${API_ENDPOINT:-}"
+        NODE_ENV: "production"
+        CHOKIDAR_USEPOLLING: "false"
     restart: always
-    environment:
-      NODE_ENV: "production"
-      CHOKIDAR_USEPOLLING: "false"
+    mem_reservation: 10M
+    mem_limit: 100M
